@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Meadow.Hardware;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Rotary;
@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         public bool State => _button.State;
 
         /// <summary>
-        /// Raised when the button circuit is re-opened after it has been closed (at the end of a “press”.
+        /// Raised when the button circuit is re-opened after it has been closed (at the end of a ï¿½pressï¿½.
         /// </summary>
         public event EventHandler Clicked = delegate { };
 
@@ -46,11 +46,10 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="buttonPin"></param>
         /// <param name="buttonCircuitTerminationType"></param>
         /// <param name="debounceDuration"></param>
-        public RotaryEncoderWithButton(IIODevice device, IPin aPhasePin, IPin bPhasePin, IPin buttonPin, 
-            CircuitTerminationType buttonCircuitTerminationType, int debounceDuration = 20)
+        public RotaryEncoderWithButton(IIODevice device, IPin aPhasePin, IPin bPhasePin, IPin buttonPin, int debounceDuration = 20)
             : base(device, aPhasePin, bPhasePin)
         {
-            _button = new PushButton(device, buttonPin, buttonCircuitTerminationType, debounceDuration);
+            _button = new PushButton(device, buttonPin, debounceDuration);
 
             _button.Clicked += ButtonClicked;
             _button.PressEnded += ButtonPressEnded;

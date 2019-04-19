@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using Meadow.Hardware;
 using Meadow.Hardware.Communications;
 using Meadow.Utilities;
 
+/*
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
@@ -18,7 +19,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public event EventHandler InterruptRaised = delegate { }; //ToDo - is this being used??
 
-        private readonly I2cBus _i2cBus;
+      //  private readonly I2cBus _i2cBus;
 
         // state
         byte _iodir;
@@ -61,6 +62,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected MCP23008()
         { }
 
+        
+
         public MCP23008(bool pinA0, bool pinA1, bool pinA2, ushort speed = 100)
             : this(MCPAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2), speed)
         {
@@ -76,26 +79,26 @@ namespace Meadow.Foundation.ICs.IOExpanders
             //SCK.Dispose();
 
             // configure our i2c bus so we can talk to the chip
-            _i2cBus = new I2cBus(address, speed);
+            //_i2cBus = new I2cBus(address, speed);
 
-            Debug.Print("initialized.");
+            Console.WriteLine("initialized.");
 
             // make sure the chip is in a default state
             Initialize();
-            Debug.Print("Chip Reset.");
+            Console.WriteLine("Chip Reset.");
             //Thread.Sleep(100);
 
             // read in the initial state of the chip
-            _iodir = _i2cBus.ReadRegister(_IODirectionRegister);
+            /_iodir = _i2cBus.ReadRegister(_IODirectionRegister);
             // tried some sleeping, but also has no effect on its reliability
             //Thread.Sleep(100);
-            //Debug.Print("IODIR: " + _iodir.ToString("X"));
+            //Console.WriteLine("IODIR: " + _iodir.ToString("X"));
             _gpio = _i2cBus.ReadRegister(_GPIORegister);
             //Thread.Sleep(100);
-            //Debug.Print("GPIO: " + _gpio.ToString("X"));
+            //Console.WriteLine("GPIO: " + _gpio.ToString("X"));
             _olat = _i2cBus.ReadRegister(_OutputLatchRegister);
             //Thread.Sleep(100);
-            //Debug.Print("OLAT: " + _olat.ToString("X"));
+            //Console.WriteLine("OLAT: " + _olat.ToString("X"));
         }
 
         protected void Initialize()
@@ -292,3 +295,4 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
     }
 }
+*/

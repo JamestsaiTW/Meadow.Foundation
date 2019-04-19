@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="echoPin"></param>
         public HCSR04(IIODevice device, IPin triggerPin, IPin echoPin) :
             this (device.CreateDigitalOutputPort(triggerPin, false), 
-                  device.CreateDigitalInputPort(echoPin, true, false, ResistorMode.Disabled)) { }
+                  device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth)) { }
 
         /// <summary>
         /// Create a new HCSR04 object 
@@ -98,13 +98,17 @@ namespace Meadow.Foundation.Sensors.Distance
             _triggerPort.State = false;
         }
 
-        private void OnEchoPortChanged(object sender, PortEventArgs e)
+        private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)
         {
             if (e.Value == true)
-            { 
+          // if(_echoPort.State == true)
+            {
+          ///      Console.WriteLine("true");
                 _tickStart = DateTime.Now.Ticks;
                 return;
             }
+
+        //    Console.WriteLine("false");
 
             // Calculate Difference
             float elapsed = DateTime.Now.Ticks - _tickStart;
@@ -114,8 +118,8 @@ namespace Meadow.Foundation.Sensors.Distance
             // divide by 58 for cm (assume speed of sound is 340m/s)
             CurrentDistance = elapsed / 580f;
 
-            if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
-                CurrentDistance = -1;
+        //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
+        //       CurrentDistance = -1;
 
             DistanceDetected?.Invoke(this, new DistanceEventArgs(CurrentDistance));
         }

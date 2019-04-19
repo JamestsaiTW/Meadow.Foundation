@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Sensors.Switches
     /// </summary>
     public class SpstSwitch : ISwitch, ISensor
     {
+        #region Properties
+
         /// <summary>
         /// Describes whether or not the switch circuit is closed/connected (IsOn = true), or open (IsOn = false).
         /// </summary>
@@ -35,35 +37,51 @@ namespace Meadow.Foundation.Sensors.Switches
         /// </summary>
         public IDigitalInputPort DigitalIn { get; protected set; }
 
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Default constructor is private to prevent it being called.
+        /// </summary>
+        private SpstSwitch() { }
+
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
         /// </summary>
+        /// <param name="device"></param>
         /// <param name="pin"></param>
-        /// <param name="type"></param>
-        public SpstSwitch(IIODevice device, IPin pin, CircuitTerminationType type)
-        {
-            // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            var resistorMode = ResistorMode.Disabled;
-            switch (type)
-            {
-                case CircuitTerminationType.CommonGround:
-                    resistorMode = ResistorMode.PullUp;
-                    break;
-                case CircuitTerminationType.High:
-                    resistorMode = ResistorMode.PullDown;
-                    break;
-                case CircuitTerminationType.Floating:
-                    resistorMode = ResistorMode.Disabled;
-                    break;
-            } 
+        /// <param name="interruptMode"></param>
+        /// <param name="resistorMode"></param>
+        /// <param name="debounceDuration"></param>
+        /// <param name="glitchFilterCycleCount"></param>
+        public SpstSwitch(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) :
+            this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) { }
 
-            DigitalIn = device.CreateDigitalInputPort(pin, true, false, resistorMode);            
+        /// <summary>
+        /// Creates a SpstSwitch on a especified interrupt port
+        /// </summary>
+        /// <param name="interruptPort"></param>
+        public SpstSwitch(IDigitalInputPort interruptPort)
+        {
+            DigitalIn = interruptPort;
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        private void DigitalIn_Changed(object sender, PortEventArgs e)
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Event handler when switch value has been changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
             IsOn = DigitalIn.State;
         }
+
+        #endregion
     }
 }

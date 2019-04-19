@@ -13,16 +13,15 @@ namespace Meadow.Foundation.Sensors.Switches
     /// </summary>
     public class SpdtSwitch : ISwitch, ISensor
     {
+        #region Properties
+
         /// <summary>
         /// Describes whether or not the switch circuit is closed/connected (IsOn = true), or open (IsOn = false).
         /// </summary>
         public bool IsOn
         {
             get => DigitalIn.State;
-            protected set
-            {
-                Changed(this, new EventArgs());
-            }
+            protected set => Changed(this, new EventArgs());
         }
 
         /// <summary>
@@ -35,19 +34,51 @@ namespace Meadow.Foundation.Sensors.Switches
         /// </summary>
         public event EventHandler Changed = delegate { };
 
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Default constructor is private to prevent it being called.
+        /// </summary>
+        private SpdtSwitch() { }
+
         /// <summary>
         /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
         /// </summary>
+        /// <param name="device"></param>
         /// <param name="pin"></param>
-        public SpdtSwitch(IIODevice device, IPin pin)
+        /// <param name="interruptMode"></param>
+        /// <param name="resistorMode"></param>
+        /// <param name="debounceDuration"></param>
+        /// <param name="glitchFilterCycleCount"></param>
+        public SpdtSwitch(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) :
+            this (device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) {}
+
+        /// <summary>
+        /// Creates a SpdtSwitch on a especified interrupt port
+        /// </summary>
+        /// <param name="interruptPort"></param>
+        public SpdtSwitch(IDigitalInputPort interruptPort)
         {
-            DigitalIn = device.CreateDigitalInputPort(pin, true, false, ResistorMode.Disabled);            
+            DigitalIn = interruptPort;
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        private void DigitalInChanged(object sender, PortEventArgs e)
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Event handler when switch value has been changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
             IsOn = DigitalIn.State;
         }
+
+        #endregion
     }
 }
